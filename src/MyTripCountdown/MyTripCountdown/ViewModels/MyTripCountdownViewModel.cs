@@ -12,6 +12,7 @@ namespace MyTripCountdown.ViewModels
     {
         private Trip _trip;
         private Countdown _countdown;
+        private int _seconds;
         private int _days;
         private int _hours;
         private int _minutes;
@@ -26,6 +27,12 @@ namespace MyTripCountdown.ViewModels
         {
             get => _trip;
             set => SetProperty(ref _trip, value);
+        }
+
+        public int Seconds
+        {
+            get => _seconds;
+            set => SetProperty(ref _seconds, value);
         }
 
         public int Days
@@ -58,13 +65,20 @@ namespace MyTripCountdown.ViewModels
         {
             LoadTrip();
 
-            _countdown.EndDate = MyTrip.Date;
+            SetCountDown(MyTrip);            
+            
             _countdown.Start();
 
             _countdown.Ticked += OnCountdownTicked;
             _countdown.Completed += OnCountdownCompleted;
 
             return base.LoadAsync();
+        }
+
+        private void SetCountDown(Trip myTrip)
+        {
+            _countdown.StartDate = MyTrip.Creation;
+            _countdown.EndDate = MyTrip.Date;
         }
 
         public override Task UnloadAsync()
@@ -77,17 +91,17 @@ namespace MyTripCountdown.ViewModels
 
         void OnCountdownTicked()
         {
+            Seconds = _countdown.RemainTime.Seconds;
             Days = _countdown.RemainTime.Days;
             Hours = _countdown.RemainTime.Hours;
             Minutes = _countdown.RemainTime.Minutes;
 
-            var totalSeconds = (MyTrip.Date - MyTrip.Creation).TotalSeconds;
-            var remainSeconds = _countdown.RemainTime.TotalSeconds;
-            Progress = remainSeconds / totalSeconds;
+            Progress = _countdown.Progress;
         }
 
         void OnCountdownCompleted()
         {
+            Seconds = 0;
             Days = 0;
             Hours = 0;
             Minutes = 0;
@@ -100,8 +114,8 @@ namespace MyTripCountdown.ViewModels
             var trip = new Trip()
             {
                 Picture = "trip",
-                Date = DateTime.Now + new TimeSpan(1, 2, 42, 15),
-                Creation = DateTime.Now.AddHours(-8)
+                Date = DateTime.Now.AddSeconds(15),
+                Creation = DateTime.Now,                
             };
 
             MyTrip = trip;
@@ -109,7 +123,13 @@ namespace MyTripCountdown.ViewModels
 
         void Restart()
         {
-            Debug.WriteLine("Restart");
+            LoadTrip();
+            SetCountDown(MyTrip);
+
+            if (_countdown.IsStopped)
+            {
+                _countdown.Start();
+            }
         }
     }
 }

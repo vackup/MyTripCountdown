@@ -80,6 +80,8 @@
                     <ColumnDefinition />
                     <ColumnDefinition Width="Auto" />
                     <ColumnDefinition />
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition />
                 </Grid.ColumnDefinitions>
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto" />
@@ -124,6 +126,21 @@
                     Grid.Column="4"
                     Grid.Row="1"
                     Text="minutes"  
+                    Style="{StaticResource SmallCountdownStyle}"/>
+                <Label 
+                    Grid.Column="5"
+                    Grid.Row="0"
+                    Text=":"
+                    Style="{StaticResource BigCountdownStyle}"/>
+                <Label 
+                    Grid.Column="6"
+                    Grid.Row="0"
+                    Text="{Binding Seconds, StringFormat='{0:D2}'}"
+                    Style="{StaticResource BigCountdownStyle}"/>
+                <Label 
+                    Grid.Column="6"
+                    Grid.Row="1"
+                    Text="seconds"  
                     Style="{StaticResource SmallCountdownStyle}"/>
             </Grid>
             <StackLayout 
